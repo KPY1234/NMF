@@ -2,6 +2,8 @@ __author__ = 'User'
 
 import csv
 import heapq
+import glob
+
 from collections import defaultdict
 
 def load_Q_matrix_from_csv(filePath):
@@ -23,7 +25,8 @@ def load_Q_matrix_from_csv(filePath):
      return user_score_dict
 
 
-def clustering(user_score_dict):
+def clustering(path, user_score_dict):
+    clusters = dict()
     users = user_score_dict.keys()
     users = map(int, users)
     users.sort()
@@ -50,16 +53,60 @@ def clustering(user_score_dict):
         # print key+"\t"+str(scores)+"\t"+str(total_score)+"\t"+str(max_score_index)
 
         if(second_score_index == -1):
+            if (clusters.__contains__(max_score_index+1)):
+                users_of_cluster = clusters[max_score_index+1]
+                users_of_cluster.append(user)
+            else:
+                users_of_cluster = list()
+                users_of_cluster.append(user)
+                clusters[max_score_index+1] = users_of_cluster
             print "user "+str(user)+" cluster:"+str(max_score_index)
         else:
+            if (clusters.__contains__(max_score_index+1)):
+                users_of_cluster = clusters[max_score_index+1]
+                users_of_cluster.append(user)
+            else:
+                users_of_cluster = list()
+                users_of_cluster.append(user)
+                clusters[max_score_index+1] = users_of_cluster
+
+            if (clusters.__contains__(second_score_index+1)):
+                users_of_cluster = clusters[second_score_index+1]
+                users_of_cluster.append(user)
+            else:
+                users_of_cluster = list()
+                users_of_cluster.append(user)
+                clusters[second_score_index+1] = users_of_cluster
+
+
             print "user "+str(user)+" cluster:"+str(max_score_index)+"\t"+str(second_score_index)
 
 
-    # print users
+    write_path = path.replace("Q_matrix", "Clusters")
+    # print write_path
+
+    with open(write_path,"w") as wf:
+        for i in range(len(clusters.keys())):
+
+            wf.write("Cluster"+str(i+1)+":,")
+            if clusters.__contains__(i+1):
+                users_of_cluster = clusters[i+1]
+                for j in range(len(users_of_cluster)):
+                    wf.write(str(users_of_cluster[j]))
+                    if j != len(users_of_cluster)-1:
+                        wf.write(",")
+                wf.write("\n")
+            else:
+                wf.write("")
+                wf.write("\n")
+
+    # print clusters
 
 
 class cluster:
 
-    path = "./Results/Q_matrix_K3_steps400_alpha0.0001_beta0.01.csv"
-    user_score_dict = load_Q_matrix_from_csv(path)
-    clustering(user_score_dict)
+    for file in glob.glob("./Results/Q_matrix_*.csv"):
+        user_score_dict = load_Q_matrix_from_csv(file)
+        clustering(file, user_score_dict)
+        print file
+
