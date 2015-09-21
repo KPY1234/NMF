@@ -2,9 +2,10 @@ __author__ = 'kyo'
 
 import csv
 from collections import defaultdict
+import CustomerCluster
 
 def load_matrix(matrix_path):
-    columns = defaultdict(list) # each value in each column is appended to a list
+    columns = defaultdict(list)
     users = list()
     users_pattern = dict()
     begin = 1
@@ -12,20 +13,17 @@ def load_matrix(matrix_path):
     with open(matrix_path) as f:
 
         print "Loading the matrix.csv file, please wait..............."
-
-        reader = csv.DictReader(f) # read rows into a dictionary format
-        for row in reader: # read a row as {column1: value1, column2: value2,...}
+        reader = csv.DictReader(f)
+        for row in reader:
             if begin:
                 begin = 0
                 users = row.keys()
                 users.remove('patterns\users')
-            for (k,v) in row.items(): # go over each column name and value
-                columns[k].append(v) # append the value into the appropriate list
-                                     # based on column name k
+            for (k,v) in row.items():
+                columns[k].append(v)
         patterns = columns['patterns\users']
 
         print "Transform to the user pattern, please wait..............."
-
         for user in range(len(users)):
             users_pattern[users.__getitem__(user)] = list()
             for idx in range(len(patterns)):
@@ -45,5 +43,9 @@ def merge_two_list(x, y):
 
 class evaluate:
 
-    path = "./DataSet/matrix2.csv"
-    load_matrix(path)
+    matrix_path = "K:\workspacePy\ItemRecommender\matrix2.csv"
+    users_pattern = load_matrix(matrix_path)
+
+    cluster_path = "./Results/Q_matrix_K3_steps400_alpha0.0001_beta0.01.csv"
+    user_score_dict = CustomerCluster.load_Q_matrix_from_csv(cluster_path)
+    CustomerCluster.clustering(user_score_dict)
