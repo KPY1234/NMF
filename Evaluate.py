@@ -43,9 +43,8 @@ def merge_two_list(x, y):
 
 class evaluate:
 
-    matrix_path = "K:\workspacePy\ItemRecommender\matrix2.csv"
+    matrix_path = "K:\workspacePy\ItemRecommender\matrix.csv"
     users_pattern = load_matrix(matrix_path)
 
-    cluster_path = "./Results/Q_matrix_K3_steps400_alpha0.0001_beta0.01.csv"
-    user_score_dict = CustomerCluster.load_Q_matrix_from_csv(cluster_path)
-    CustomerCluster.clustering(user_score_dict)
+
+
