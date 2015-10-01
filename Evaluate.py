@@ -9,7 +9,7 @@ def load_matrix(matrix_path):
     begin = 1
 
     with open(matrix_path) as f:
-        print "Loading the matrix.csv file, please wait: " + matrix_path
+        print "Loading the matrix.csv file (" + matrix_path + "), please wait.............."
         reader = csv.DictReader(f)
         for row in reader:
             if begin:
@@ -39,56 +39,48 @@ def load_cluster_result(result_path):
             idx += 1
     return cluster_result
 
-def find_users_top10_patterns(users_pattern):
+def get_clusters_index(users_pattern, cluster_result):
 
-    print "Find each user's top 10 patterns............................"
-    users_top10_patterns = dict()
-    users = users_pattern.keys()
-    top10_list = list()
+    print "Get each cluster's index............................"
+    clusters_index = dict()
+    clusters_users_count = dict()
+    clusters_users_patterns = dict()
+    patterns_users_count = dict()
 
-    for user in users:
-        users_top10_patterns[user] = list()
-        for pattern_list in users_pattern[user]:
-            for pattern_key in pattern_list:
-                if pattern_list[pattern_key] is not None:
-                    if len(users_top10_patterns[user]) < 10:
-                        users_top10_patterns[user].append(pattern_key)
-                    else:
-                        for top10 in top10_list:
-                            if pattern_list[pattern_key] > top10:
-                                users_top10_patterns[user].append(pattern_key)
-                                users_top10_patterns[user].sort()
-                                if len(users_top10_patterns[user]) > 10:
-                                    users_top10_patterns[user].pop()
-    return users_top10_patterns
+    print "Get each cluster's users count and patterns......................"
+    for cluster in cluster_result:
+        clusters_users_count[cluster] = len(cluster_result[cluster])
+        clusters_users_patterns[cluster] = list()
+        for user in cluster_result[cluster]:
+            for pattern in users_pattern[user]:
+                if str(pattern.keys()) in clusters_users_patterns[cluster]:
+                    patterns_users_count[str(pattern.keys())] += 1
+                else:
+                    clusters_users_patterns[cluster].append(str(pattern.keys()))
+                    patterns_users_count[str(pattern.keys())] = 0
+        clusters_index[cluster] = 0
+        for users_count in patterns_users_count:
+            clusters_index[cluster] += float(patterns_users_count[users_count]) / (clusters_users_count[cluster] * len(
+                clusters_users_patterns[cluster]))
+    return clusters_index
 
-# def find_clusters_top10_patterns(cluster_result, users_pattern):
-#
-#     print "Find each cluster's top 10 patterns........................."
-#     clusters_top10_patterns = dict()
-#
-#     for cluster in cluster_result:
-#         clusters_top10_patterns[cluster] = list()
-#         cluster_users = cluster_result[cluster]
-#         for cluster_user in cluster_users:
-#             cluster_top10_patterns[cluster] = merge_list(cluster_top10_patterns[cluster], users_pattern[cluster_user].keys())
-#             print cluster_user
-#     return clusters_top10_patterns
-
-def merge_list(a, b):
-    c = list(set(a).union(set(b)))
-    return c
-
-class evaluate:
+class Evaluate:
 
     matrix_path = "D:\Python\workspacePy\matrix.csv"
     users_pattern = load_matrix(matrix_path)
 
-    result_path = "D:\Python\workspacePy\NMF\Results\Clusters_K3_steps400_alpha0.0001_beta0.01.csv"
-    cluster_result = load_cluster_result(result_path)
+    K = [3,4,5,8,9,10]
+    Step = [400,500,600]
+    Alpha = [0.0001,0.0002,0.0003]
+    Beta = [0.01, 0.015, 0.02]
+    for k in K:
+        for step in Step:
+            for alpha in Alpha:
+                for beta in Beta:
+                    result_path = "D:\Python\workspacePy\NMF\Results\Clusters_K" + k + "_steps" + step + "_alpha" + alpha + "_beta" + beta + ".csv"
+                    cluster_result = load_cluster_result(result_path)
+                    clusters_index = get_clusters_index(users_pattern, cluster_result)
 
-    users_top10_patterns = find_users_top10_patterns(users_pattern)
-    print 123
     # clusters_top10_patterns = find_clusters_top10_patterns(cluster_result, users_pattern)
 
 
