@@ -25,6 +25,7 @@ def load_matrix(matrix_path):
                 if v != '0':
                     columns[k].append(v)
                     users_pattern[k].append({row['patterns\users']: v})
+
     return users_pattern
 
 def load_cluster_result(result_path):
