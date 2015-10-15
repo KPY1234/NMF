@@ -2,6 +2,7 @@ __author__ = 'Kao & Kyo'
 import numpy
 import pickle
 import time
+import os
 
 def nmf_imp(users, patterns, normal_matrix, K, steps, alpha, beta):
     R = numpy.array(normal_matrix)
@@ -21,6 +22,9 @@ def nmf_imp(users, patterns, normal_matrix, K, steps, alpha, beta):
 
     nP, nQ = matrix_factorisation(R, P, Q, K, steps, alpha, beta)
     nR = numpy.dot(nP, nQ.T)
+
+    if not os.path.exists('./Results'):
+        os.makedirs('./Results')
 
     ## write patterns\users matrix
     filename = "./Results/NMF_matrix_K"+str(K)+"_steps"+str(steps)+"_alpha"+str(alpha)+"_beta"+str(beta)+".csv"
