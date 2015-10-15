@@ -68,41 +68,41 @@ def get_clusters_index(users_pattern, cluster_result):
 
 class Evaluate:
 
-    matrix_path = "E:\workspacePy\dataMining\matrix.csv"
+    matrix_path = "./DataSet/matrix.csv"
     users_pattern = load_matrix(matrix_path)
 
-    result_path = "E:\workspacePy\NMF\Results\Clusters_K3_steps400_alpha0.0001_beta0.01.csv"
-    cluster_result = load_cluster_result(result_path)
-    clusters_index = get_clusters_index(users_pattern, cluster_result)
-    for cluster in clusters_index:
-        print clusters_index[cluster]
-    if os.path.exists(result_path):
-        cluster_result = load_cluster_result(result_path)
-        clusters_index = get_clusters_index(users_pattern, cluster_result)
-        write_path = "E:\workspacePy\NMF\Results\EvaluateResult_K3_steps400_alpha0.0001_beta0.01.csv"
-        print "Write the evaluate result to file:" + write_path
-        with open(write_path, "w") as wf:
-            for cluster in clusters_index:
-                wf.write("Cluster"+str(cluster)+":,")
-                wf.write(str(clusters_index[cluster]))
-                wf.write("\n")
+    # result_path = "./Results/Clusters_K3_steps400_alpha0.0001_beta0.01.csv"
+    # cluster_result = load_cluster_result(result_path)
+    # clusters_index = get_clusters_index(users_pattern, cluster_result)
+    # for cluster in clusters_index:
+    #     print clusters_index[cluster]
+    # if os.path.exists(result_path):
+    #     cluster_result = load_cluster_result(result_path)
+    #     clusters_index = get_clusters_index(users_pattern, cluster_result)
+    #     write_path = "./Results/EvaluateResult_K3_steps400_alpha0.0001_beta0.01.csv"
+    #     print "Write the evaluate result to file:" + write_path
+    #     with open(write_path, "w") as wf:
+    #         for cluster in clusters_index:
+    #             wf.write("Cluster"+str(cluster)+":,")
+    #             wf.write(str(clusters_index[cluster]))
+    #             wf.write("\n")
 
-    # K = [3,4,5,8,9,10]
-    # Step = [400,500,600]
-    # Alpha = [0.0001,0.0002,0.0003]
-    # Beta = [0.01, 0.015, 0.02]
-    # for k in K:
-    #     for step in Step:
-    #         for alpha in Alpha:
-    #             for beta in Beta:
-    #                 result_path = "E:\workspacePy\NMF\Results\Clusters_K" + k + "_steps" + step + "_alpha" + alpha + "_beta" + beta + ".csv"
-    #                 if os.path.exists(result_path):
-    #                     cluster_result = load_cluster_result(result_path)
-    #                     clusters_index = get_clusters_index(users_pattern, cluster_result)
-    #                     write_path = "E:\workspacePy\NMF\Results\EvaluateResult_K" + k + "_steps" + step + "_alpha" + alpha + "_beta" + beta + ".csv"
-    #                     print "Write the evaluate result to file:" + write_path
-    #                     with open(write_path,"w") as wf:
-    #                         for cluster in clusters_index:
-    #                             wf.write("Cluster"+str(cluster)+":,")
-    #                             wf.write(str(clusters_index[cluster]))
-    #                             wf.write("\n")
+    K = [3,4,5,8,9,10]
+    Step = [400,500,600]
+    Alpha = [0.0001,0.0002,0.0003]
+    Beta = [0.01, 0.015, 0.02]
+    for k in K:
+        for step in Step:
+            for alpha in Alpha:
+                for beta in Beta:
+                    result_path = "./Results/Clusters_K" + k + "_steps" + step + "_alpha" + alpha + "_beta" + beta + ".csv"
+                    if os.path.exists(result_path):
+                        cluster_result = load_cluster_result(result_path)
+                        clusters_index = get_clusters_index(users_pattern, cluster_result)
+                        write_path = "./Results\EvaluateResult_K" + k + "_steps" + step + "_alpha" + alpha + "_beta" + beta + ".csv"
+                        print "Write the evaluate result to file:" + write_path
+                        with open(write_path,"w") as wf:
+                            for cluster in clusters_index:
+                                wf.write("Cluster"+str(cluster)+":,")
+                                wf.write(str(clusters_index[cluster]))
+                                wf.write("\n")
