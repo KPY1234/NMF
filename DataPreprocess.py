@@ -1,5 +1,6 @@
 __author__ = 'c11KPY'
 import csv
+import os
 import pickle
 
 
@@ -54,7 +55,10 @@ def user_transaction_mapping(user_dict):
 
     filter_users = sorted(user_transaction_dict.keys())
 
-    with open("./DataSet/filter_users.pkl", "wb") as wf:
+    if not os.path.exists('./pkls'):
+        os.makedirs('./pkls')
+
+    with open("./pkls/filter_users.pkl", "wb") as wf:
         pickle.dump(filter_users, wf)
 
 
@@ -108,7 +112,10 @@ def transToUserPatternDict(user_transaction_dict):
         #     print (usercount)
     # print user_pattern_dic[8]
 
-    with open("./DataSet/patterns.pkl", "wb") as wf:
+    if not os.path.exists('./pkls'):
+        os.makedirs('./pkls')
+
+    with open("./pkls/patterns.pkl", "wb") as wf:
         pickle.dump(patterns, wf)
 
     return user_pattern_dic, patterns
@@ -165,7 +172,9 @@ def transToMatrix(users, user_pattern_dic, patterns):
                     wf.write(",")
             wf.write("\n")
 
-    with open("./DataSet/matrix.pkl", "wb") as wf:
+    if not os.path.exists('./pkls'):
+        os.makedirs('./pkls')
+    with open("./pkls/matrix.pkl", "wb") as wf:
         pickle.dump(user_pattern_matrix, wf)
 
     return user_pattern_matrix
@@ -204,13 +213,15 @@ def normalizeMatrix(users, user_pattern_matrix, patterns):
                     wf.write(",")
             wf.write("\n")
 
-    with open("./DataSet/normal_matrix.pkl", "wb") as wf:
+    if not os.path.exists('./pkls'):
+        os.makedirs('./pkls')
+    with open("./pkls/normal_matrix.pkl", "wb") as wf:
         pickle.dump(user_pattern_matrix, wf)
 
     return user_pattern_matrix
 
 if __name__ == '__main__':
-    data_file_path = 'D:/MyProject/Python/NMF/DataSet/data.csv'
+    data_file_path = './DataSet/data.csv'
     d = load_csv(data_file_path)
     filter_users, trans_dic = user_transaction_mapping(d)
     user_pattern_dict, patterns = transToUserPatternDict(trans_dic)

@@ -23,7 +23,7 @@ def nmf_imp(users, patterns, normal_matrix, K, steps, alpha, beta):
     nR = numpy.dot(nP, nQ.T)
 
     ## write patterns\users matrix
-    filename = "./NMF_matrix_K"+str(K)+"_steps"+str(steps)+"_alpha"+str(alpha)+"_beta"+str(beta)+".csv"
+    filename = "./Results/NMF_matrix_K"+str(K)+"_steps"+str(steps)+"_alpha"+str(alpha)+"_beta"+str(beta)+".csv"
     with open(filename,"w") as wf:
         wf.write("patterns\users,")
         for i in range(len(users)):
@@ -41,7 +41,7 @@ def nmf_imp(users, patterns, normal_matrix, K, steps, alpha, beta):
             wf.write("\n")
 
     ## write patterns\K matrix
-    filename = "./P_matrix_K"+str(K)+"_steps"+str(steps)+"_alpha"+str(alpha)+"_beta"+str(beta)+".csv"
+    filename = "./Results/P_matrix_K"+str(K)+"_steps"+str(steps)+"_alpha"+str(alpha)+"_beta"+str(beta)+".csv"
     with open(filename,"w") as wf:
         wf.write("patterns\K,")
         for i in range(K):
@@ -60,7 +60,7 @@ def nmf_imp(users, patterns, normal_matrix, K, steps, alpha, beta):
 
 
     ## write K\users matrix
-    filename = "./Q_matrix_K"+str(K)+"_steps"+str(steps)+"_alpha"+str(alpha)+"_beta"+str(beta)+".csv"
+    filename = "./Results/Q_matrix_K"+str(K)+"_steps"+str(steps)+"_alpha"+str(alpha)+"_beta"+str(beta)+".csv"
     with open(filename,"w") as wf:
         wf.write("K\users,")
         for i in range(len(users)):
@@ -109,7 +109,7 @@ def matrix_factorisation(R, P, Q, K, steps, alpha, beta):
 
 def cluster(users, Q, K, steps, alpha, beta):
 
-    filename = "./Clusters_K"+str(K)+"_steps"+str(steps)+"_alpha"+str(alpha)+"_beta"+str(beta)+".csv"
+    filename = "./Results/Clusters_K"+str(K)+"_steps"+str(steps)+"_alpha"+str(alpha)+"_beta"+str(beta)+".csv"
 
     clusters = dict()
     for i in range(len(Q[0])):
@@ -144,12 +144,12 @@ def cluster(users, Q, K, steps, alpha, beta):
 
 class Module_data_mining:
 
-    with open('./DataSet/filter_users.pkl') as rf:
+    with open('./pkls/filter_users.pkl') as rf:
 
         filter_users = pickle.load(rf)
-    with open('./DataSet/patterns.pkl') as rf:
+    with open('./pkls/patterns.pkl') as rf:
         patterns = pickle.load(rf)
-    with open('./DataSet/normal_matrix.pkl') as rf:
+    with open('./pkls/normal_matrix.pkl') as rf:
         normal_matrix = pickle.load(rf)
 
 
