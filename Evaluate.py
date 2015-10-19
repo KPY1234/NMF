@@ -2,6 +2,8 @@ __author__ = 'kyo'
 
 import csv
 import os
+import pickle
+import time
 from collections import defaultdict
 
 def load_matrix(matrix_path):
@@ -95,11 +97,11 @@ class Evaluate:
         for step in Step:
             for alpha in Alpha:
                 for beta in Beta:
-                    result_path = "./Results/Clusters_K" + k + "_steps" + step + "_alpha" + alpha + "_beta" + beta + ".csv"
+                    result_path = "./Results/Clusters_K" + str(k) + "_steps" + str(step) + "_alpha" + str(alpha) + "_beta" + str(beta) + ".csv"
                     if os.path.exists(result_path):
                         cluster_result = load_cluster_result(result_path)
                         clusters_index = get_clusters_index(users_pattern, cluster_result)
-                        write_path = "./Results\EvaluateResult_K" + k + "_steps" + step + "_alpha" + alpha + "_beta" + beta + ".csv"
+                        write_path = "./Results/EvaluateResult_K" + str(k) + "_steps" + str(step) + "_alpha" + str(alpha) + "_beta" + str(beta) + ".csv"
                         print "Write the evaluate result to file:" + write_path
                         with open(write_path,"w") as wf:
                             for cluster in clusters_index:
