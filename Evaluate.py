@@ -2,8 +2,7 @@ __author__ = 'kyo'
 
 import csv
 import os
-import pickle
-import time
+import glob
 from collections import defaultdict
 
 def load_matrix(matrix_path):
@@ -48,9 +47,11 @@ def get_clusters_index(users_pattern, cluster_result):
     clusters_index = dict()
     clusters_users_count = dict()
     clusters_users_patterns = dict()
-    patterns_users_count = dict()
 
     for cluster in cluster_result:
+        patterns_users_count = dict()
+        if cluster_result[cluster][0] == '':
+            continue
         clusters_users_count[cluster] = len(cluster_result[cluster])
         clusters_users_patterns[cluster] = list()
         print "Get cluster:" + str(cluster) + " users count and patterns..."
@@ -60,12 +61,13 @@ def get_clusters_index(users_pattern, cluster_result):
                     patterns_users_count[str(pattern.keys())] += 1
                 else:
                     clusters_users_patterns[cluster].append(str(pattern.keys()))
-                    patterns_users_count[str(pattern.keys())] = 0
+                    patterns_users_count[str(pattern.keys())] = 1
         clusters_index[cluster] = 0
         print "Get cluster:" + str(cluster) + " index..."
         for users_count in patterns_users_count:
-            clusters_index[cluster] += float(patterns_users_count[users_count]) / (clusters_users_count[cluster] * len(
-                clusters_users_patterns[cluster]))
+            clusters_index[cluster] += float(patterns_users_count[users_count]) / (float(clusters_users_count[cluster] * len(
+                clusters_users_patterns[cluster])))
+        print clusters_index[cluster]
     return clusters_index
 
 class Evaluate:
@@ -73,38 +75,16 @@ class Evaluate:
     matrix_path = "./DataSet/matrix.csv"
     users_pattern = load_matrix(matrix_path)
 
-    # result_path = "./Results/Clusters_K3_steps400_alpha0.0001_beta0.01.csv"
-    # cluster_result = load_cluster_result(result_path)
-    # clusters_index = get_clusters_index(users_pattern, cluster_result)
-    # for cluster in clusters_index:
-    #     print clusters_index[cluster]
-    # if os.path.exists(result_path):
-    #     cluster_result = load_cluster_result(result_path)
-    #     clusters_index = get_clusters_index(users_pattern, cluster_result)
-    #     write_path = "./Results/EvaluateResult_K3_steps400_alpha0.0001_beta0.01.csv"
-    #     print "Write the evaluate result to file:" + write_path
-    #     with open(write_path, "w") as wf:
-    #         for cluster in clusters_index:
-    #             wf.write("Cluster"+str(cluster)+":,")
-    #             wf.write(str(clusters_index[cluster]))
-    #             wf.write("\n")
-
-    K = [3,4,5,8,9,10]
-    Step = [400,500,600]
-    Alpha = [0.0001,0.0002,0.0003]
-    Beta = [0.01, 0.015, 0.02]
-    for k in K:
-        for step in Step:
-            for alpha in Alpha:
-                for beta in Beta:
-                    result_path = "./Results/Clusters_K" + str(k) + "_steps" + str(step) + "_alpha" + str(alpha) + "_beta" + str(beta) + ".csv"
-                    if os.path.exists(result_path):
-                        cluster_result = load_cluster_result(result_path)
-                        clusters_index = get_clusters_index(users_pattern, cluster_result)
-                        write_path = "./Results/EvaluateResult_K" + str(k) + "_steps" + str(step) + "_alpha" + str(alpha) + "_beta" + str(beta) + ".csv"
-                        print "Write the evaluate result to file:" + write_path
-                        with open(write_path,"w") as wf:
-                            for cluster in clusters_index:
-                                wf.write("Cluster"+str(cluster)+":,")
-                                wf.write(str(clusters_index[cluster]))
-                                wf.write("\n")
+    for file in glob.glob("./NewClusterResult/H_*_threshold_*.csv"):
+        result_path = file
+        if os.path.exists(result_path):
+            cluster_result = load_cluster_result(result_path)
+            clusters_index = get_clusters_index(users_pattern, cluster_result)
+            write_path = file.split(".csv")[0] + "_EvaluateResult.csv"
+            print "Write the evaluate result to file:" + write_path
+            with open(write_path,"w") as wf:
+                for cluster in clusters_index:
+                    wf.write("Cluster"+str(cluster)+":,")
+                    wf.write(str(clusters_index[cluster]) + ",")
+                    wf.write(str(len(cluster_result[cluster])))
+                    wf.write("\n")

@@ -1,7 +1,6 @@
 __author__ = 'Kyo'
 
 import csv
-import heapq
 import glob
 
 from collections import defaultdict
@@ -27,16 +26,12 @@ def clustering(path, user_score_dict, threshold):
         scores = map(float, user_score_dict[key])
         for score in scores:
             if score > threshold:
-                print score
-                print scores.index(score)
                 clusterNumber = scores.index(score)
                 if not clusters.keys().__contains__(clusterNumber):
                     clusters[clusterNumber] = list()
                 clusters[clusterNumber].append(user)
-                print clusters[clusterNumber]
 
-    write_path = path + "_thresholdTransfer"
-
+    write_path = path.split(".csv")[0] + "_threshold_" + str(threshold) + ".csv"
     with open(write_path,"w") as wf:
         for i in range(len(clusters.keys())):
             wf.write("Cluster"+str(i+1)+":,")
@@ -50,8 +45,6 @@ def clustering(path, user_score_dict, threshold):
             else:
                 wf.write("")
                 wf.write("\n")
-
-    # print clusters
 
 class cluster:
     threshold = [0.005,0.01,0.02,0.03]
