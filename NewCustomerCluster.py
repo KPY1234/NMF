@@ -35,8 +35,8 @@ def clustering(path, user_score_dict, threshold):
     with open(write_path,"w") as wf:
         for i in range(len(clusters.keys())):
             wf.write("Cluster"+str(i+1)+":,")
-            if clusters.__contains__(i+1):
-                users_of_cluster = clusters[i+1]
+            if clusters.__contains__(i):
+                users_of_cluster = clusters[i]
                 for j in range(len(users_of_cluster)):
                     wf.write(str(users_of_cluster[j]))
                     if j != len(users_of_cluster)-1:
