@@ -2,6 +2,7 @@ __author__ = 'Kyo'
 
 import csv
 import glob
+import os
 
 from collections import defaultdict
 
@@ -46,10 +47,7 @@ def clustering(path, user_score_dict, threshold):
                 wf.write("")
                 wf.write("\n")
 
-class cluster:
-    threshold = [0.005,0.01,0.02,0.03]
-    for file in glob.glob("./NewClusterResult/H_*.csv"):
-        for value in threshold:
-            user_score_dict = load_result_from_csv(file)
-            clustering(file, user_score_dict, value)
-            print file
+
+
+
+
