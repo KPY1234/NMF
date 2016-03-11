@@ -6,6 +6,8 @@ from collections import defaultdict
 
 __author__ = 'kyo'
 
+clusters_top_n_patterns = dict()
+
 def load_matrix(matrix_path):
     columns = defaultdict(list)
     users_pattern = dict()
@@ -49,12 +51,11 @@ def get_clusters_index(users_pattern, cluster_result, top_pattern_number):
     for cluster in cluster_result:
         clusters_index[cluster] = 0
         clusters_users_patterns = dict()
-        cluster_top_patterns = list()
+        top_patterns = list()
         user_list = list()
         for user in cluster_result[cluster]:
             user_list.append(user)
         # user_list = user_list.replace("\\n", "").split(",")
-
         for user in user_list:
             for pattern in users_pattern[user]:
                 for pattern_key in pattern.keys():
@@ -66,11 +67,11 @@ def get_clusters_index(users_pattern, cluster_result, top_pattern_number):
 
         for i in range(top_pattern_number):
             if (len(sorted_clusters_users_patterns) - i - 1) > 0:
-                cluster_top_patterns.append(sorted_clusters_users_patterns[len(sorted_clusters_users_patterns) - i - 1][0])
+                top_patterns.append(sorted_clusters_users_patterns[len(sorted_clusters_users_patterns) - i - 1][0])
 
         top_patterns_users = dict()
 
-        for top_pattern in cluster_top_patterns:
+        for top_pattern in top_patterns:
             top_patterns_users[top_pattern] = 0
             for user in user_list:
                 for pattern in users_pattern[user]:
@@ -81,6 +82,8 @@ def get_clusters_index(users_pattern, cluster_result, top_pattern_number):
         for top_pattern in top_patterns_users:
             clusters_index[cluster] += float(top_patterns_users[top_pattern]) / user_list.__len__() / top_pattern_number
 
+        clusters_top_n_patterns[cluster] = top_patterns
+
     return clusters_index
 
 class Evaluate:
@@ -89,6 +92,9 @@ class Evaluate:
 
     matrix_path = "./DataSet/matrix.csv"
     users_pattern = load_matrix(matrix_path)
+
+    total_value = 0
+    total_user = 0
 
     for top_pattern_number in top_pattern:
         for file in glob.glob("./NewClusterResult/Cluster_Kmeans_*.csv"):
@@ -103,5 +109,10 @@ class Evaluate:
                     for cluster in clusters_index:
                         wf.write("Cluster"+str(cluster)+":,")
                         wf.write(str(clusters_index[cluster]) + ",")
-                        wf.write(str(len(cluster_result[cluster])))
+                        wf.write(str(len(cluster_result[cluster])) + ",")
+                        for patterns in clusters_top_n_patterns[cluster]:
+                            wf.write(str(patterns) + ",")
+                        total_value += clusters_index[cluster] * len(cluster_result[cluster])
+                        total_user += len(cluster_result[cluster])
                         wf.write("\n")
+                    wf.write("EvaValue:" + "," + str(total_value/total_user))
