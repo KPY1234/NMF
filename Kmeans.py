@@ -2,6 +2,7 @@ __author__ = 'User'
 
 from numpy import *
 import csv
+import os
 import time
 # import matplotlib.pyplot as plt
 
@@ -37,28 +38,37 @@ def kmeans(dataSet, k, max_iter=100000):
 
     cluster_assignment = mat(zeros((num_samples, 2)))
     for row in xrange(num_samples):
+        cluster_assignment[row, 0] = int(-1)
         cluster_assignment[row, 1] = float('inf')
 
-    clusterChanged = True
+    cluster_changed = True
 
     ## step 1: init centroids
     centroids = initCentroids(dataSet, k)
 
     iter = 0
 
-    while clusterChanged:
-        clusterChanged = False
+    while cluster_changed:
+
+        print 'iter: '+str(iter)
+
+        cluster_changed = False
         ## for each sample
         for i in xrange(num_samples):
             ## for each centroid
             ## step 2: find the centroid who is closest
 
+            minIndex = int(cluster_assignment[i, 0])
             minDist = cluster_assignment[i, 1]
-            minIndex = cluster_assignment[i, 0]
+
+            v1 = dataSet[i, :]
 
             for j in range(k):
-                v1 = dataSet[i, :]
+
                 v2 = centroids[j, :]
+
+                # print str(v1)+"\t"+str(v2)
+
                 distance = euclDistance(v1, v2)
 
                 if distance < minDist:
@@ -67,15 +77,15 @@ def kmeans(dataSet, k, max_iter=100000):
 
             ## step 3: update its cluster
             if cluster_assignment[i, 0] != minIndex:
-                clusterChanged = True
+                cluster_changed = True
                 cluster_assignment[i, :] = minIndex, minDist
 
         ## step 4: update centroids
         for j in xrange(k):
-            pointsInCluster = dataSet[nonzero(cluster_assignment[:, 0].A == j)[0]]
-            centroids[j, :] = mean(pointsInCluster, axis = 0)
+            dataInCluster = [dataSet[row, :] for row in xrange(cluster_assignment.shape[0]) if cluster_assignment[row, 0] == j]
+            centroids[j, :] = mean(dataInCluster, axis=0)
 
-        iter+=1
+        iter += 1
         if iter == max_iter:
             break
         # print clusterChanged
@@ -108,8 +118,9 @@ def kmeans(dataSet, k, max_iter=100000):
 #     plt.show()
 
 def cluster_output(file_name, clusters):
+
      with open(file_name, "w") as wf:
-        for i in range(len(clusters.keys())):
+        for i in xrange(len(clusters.keys())):
 
             wf.write("Cluster"+str(i+1)+":,")
             # if clusters.__contains__(i+1):
@@ -127,7 +138,7 @@ class kmeans_class:
     ## step 1: load data
     print "step 1: load data..."
 
-    f = csv.reader(open('./DataSet/normal_matrix.csv'))
+    f = csv.reader(open('./DataSet/normal_matrix_top_15.csv'))
     fields = f.next()
     dimension = len(fields)-1
 
@@ -142,15 +153,24 @@ class kmeans_class:
         # print values
         dataSet.append(values)
 
+
     # step 2: clustering...
     print "step 2: clustering..."
     data_matrix = mat(dataSet)
 
+    rows, columns = data_matrix.shape
 
-    list_k = [4,5,6,7,8]
+    column = 0
+    for i in xrange(rows):
+        data_matrix[i, column % columns] += ((column/columns + 1)/10000.0)
+        column += 1
+
+    list_k = [8, 10, 12]
 
     for i in xrange(len(list_k)):
         k = list_k[i]
+
+        print 'k-means with k: '+str(k)
 
         centroids, cluster_assignment = kmeans(data_matrix, k)
 
@@ -175,7 +195,10 @@ class kmeans_class:
 
         # print dic
 
-        file_name = './NewClusterResult/Cluster_Kmeans_k'+str(k)+'.csv'
+        file_name = './NewClusterResult/top15/Cluster_Kmeans_k'+str(k)+'.csv'
+
+        if not os.path.exists('./NewClusterResult/top15'):
+            os.makedirs('./NewClusterResult/top15')
 
         cluster_output(file_name, dic)
 
