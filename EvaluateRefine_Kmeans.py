@@ -54,7 +54,8 @@ def get_clusters_index(users_pattern, cluster_result, top_pattern_number):
         top_patterns = list()
         user_list = list()
         for user in cluster_result[cluster]:
-            user_list.append(user)
+            if user != " ":
+                user_list.append(user)
         # user_list = user_list.replace("\\n", "").split(",")
         for user in user_list:
             for pattern in users_pattern[user]:
