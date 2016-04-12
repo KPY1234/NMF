@@ -102,7 +102,7 @@ class Evaluate:
             if os.path.exists(result_path):
                 cluster_result = load_cluster_result(result_path)
                 clusters_index = get_clusters_index(users_pattern, cluster_result, top_pattern_number)
-                write_path = file.split("refined_cluster.csv")[
+                write_path = file.split(".csv")[
                                  0] + "_topPattern" + str(top_pattern_number) + "_EvaluateResultRefined.csv"
                 print "Write the evaluate result to file:" + write_path
                 with open(write_path, "w") as wf:
