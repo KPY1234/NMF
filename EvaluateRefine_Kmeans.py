@@ -44,6 +44,17 @@ def load_cluster_result(result_path):
             idx += 1
     return cluster_result
 
+def get_cluster_users(cluster_result):
+    clusters_users = dict()
+    for cluster in cluster_result:
+        user_list = list()
+        for user in cluster_result[cluster]:
+            if user != " ":
+                if user != "\\n":
+                    user_list.append(user)
+        clusters_users[cluster] = user_list
+    return clusters_users
+
 def get_clusters_index(users_pattern, cluster_result, top_pattern_number):
 
     clusters_index = dict()
@@ -52,11 +63,14 @@ def get_clusters_index(users_pattern, cluster_result, top_pattern_number):
         clusters_index[cluster] = 0
         clusters_users_patterns = dict()
         top_patterns = list()
-        user_list = list()
-        for user in cluster_result[cluster]:
-            if user != " ":
-                user_list.append(user)
+
+        user_list = get_cluster_users(cluster_result)[cluster]
+
+        # for user in cluster_result[cluster]:
+        #     if user != " ":
+        #         user_list.append(user)
         # user_list = user_list.replace("\\n", "").split(",")
+
         for user in user_list:
             for pattern in users_pattern[user]:
                 for pattern_key in pattern.keys():
@@ -103,6 +117,7 @@ class Evaluate:
             if os.path.exists(result_path):
                 cluster_result = load_cluster_result(result_path)
                 clusters_index = get_clusters_index(users_pattern, cluster_result, top_pattern_number)
+                cluster_users = get_cluster_users(cluster_result)
                 write_path = "./NewClusterResult/" + file.split(".csv")[
                                  0].split("Cluster_")[1] + "_topPattern" + str(top_pattern_number) + "_EvaluateResultRefined.csv"
                 print "Write the evaluate result to file:" + write_path
@@ -112,10 +127,10 @@ class Evaluate:
                     for cluster in clusters_index:
                         wf.write("Cluster"+str(cluster)+":,")
                         wf.write(str(clusters_index[cluster]) + ",")
-                        wf.write(str(len(cluster_result[cluster])) + ",")
+                        wf.write(str(len(cluster_users[cluster])) + ",")
                         for patterns in clusters_top_n_patterns[cluster]:
                             wf.write(str(patterns) + ",")
-                        total_value += clusters_index[cluster] * len(cluster_result[cluster])
-                        total_user += len(cluster_result[cluster])
+                        total_value += clusters_index[cluster] * len(cluster_users[cluster])
+                        total_user += len(cluster_users[cluster])
                         wf.write("\n")
                     wf.write("EvaValue:" + "," + str(total_value/total_user))
