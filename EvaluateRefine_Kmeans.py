@@ -107,6 +107,8 @@ class Evaluate:
                                  0].split("Cluster_")[1] + "_topPattern" + str(top_pattern_number) + "_EvaluateResultRefined.csv"
                 print "Write the evaluate result to file:" + write_path
                 with open(write_path, "w") as wf:
+                    total_value = 0.
+                    total_user = 0
                     for cluster in clusters_index:
                         wf.write("Cluster"+str(cluster)+":,")
                         wf.write(str(clusters_index[cluster]) + ",")

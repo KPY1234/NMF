@@ -97,15 +97,17 @@ class Evaluate:
     total_user = 0
 
     for top_pattern_number in top_pattern:
-        for file in glob.glob("K:\ChromeDownload\NMF10-correlation-H_refined_cluster.csv"):
+        for file in glob.glob("D:\Python\workspacePy\NMF\NewClusterResult\H_*_refined_cluster.csv"):
             result_path = file
             if os.path.exists(result_path):
                 cluster_result = load_cluster_result(result_path)
                 clusters_index = get_clusters_index(users_pattern, cluster_result, top_pattern_number)
-                write_path = file.split(".csv")[
+                write_path = file.split("refined_cluster.csv")[
                                  0] + "_topPattern" + str(top_pattern_number) + "_EvaluateResultRefined.csv"
                 print "Write the evaluate result to file:" + write_path
                 with open(write_path, "w") as wf:
+                    total_value = 0.
+                    total_user = 0
                     for cluster in clusters_index:
                         wf.write("Cluster"+str(cluster)+":,")
                         wf.write(str(clusters_index[cluster]) + ",")
