@@ -128,14 +128,20 @@ class Evaluate:
                 with open(write_path, "w") as wf:
                     total_value = 0.
                     total_user = 0
+                    sum_ns = 0.
                     for cluster in clusters_index:
                         wf.write("Cluster"+str(cluster)+":,")
                         wf.write(str(clusters_index[cluster]) + ",")
                         wf.write(str(len(cluster_users[cluster])) + ",")
                         for patterns in clusters_top_n_patterns[cluster]:
                             wf.write(str(patterns) + ",")
-                        wf.write("non_similarity:" + str(cluster_similarity[cluster]) + ",")
+                        wf.write(str(cluster_similarity[cluster]) + ",")
                         total_value += clusters_index[cluster] * len(cluster_users[cluster])
                         total_user += len(cluster_users[cluster])
+                        sum_ns += cluster_similarity[cluster]
                         wf.write("\n")
                     wf.write("EvaValue:" + "," + str(total_value/total_user))
+                    ns_means = sum_ns/clusters_top_n_patterns.keys().__len__()
+                    for num in range(clusters_top_n_patterns[clusters_top_n_patterns.keys()[1]].__len__()):
+                        wf.write(",")
+                    wf.write("," + "NonSimilarityMeans:" + "," + str(ns_means))
