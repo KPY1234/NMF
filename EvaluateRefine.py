@@ -6,8 +6,6 @@ from collections import defaultdict
 
 __author__ = 'kyo'
 
-clusters_top_n_patterns = dict()
-
 def load_matrix(matrix_path):
     columns = defaultdict(list)
     users_pattern = dict()
@@ -22,7 +20,7 @@ def load_matrix(matrix_path):
                 users.remove('patterns\users')
                 for user in users:
                     users_pattern[user] = list()
-            for (k,v) in row.items():
+            for (k, v) in row.items():
                 if k == 'patterns\users':
                     continue
                 if v != '0':
@@ -55,9 +53,8 @@ def get_cluster_users(cluster_result):
     return clusters_users
 
 def get_clusters_index(users_pattern, cluster_result, top_pattern_number):
-
+    clusters_top_n_patterns = dict()
     clusters_index = dict()
-
     for cluster in cluster_result:
         user_list = get_cluster_users(cluster_result)[cluster]
         clusters_users_patterns = dict()
@@ -91,7 +88,21 @@ def get_clusters_index(users_pattern, cluster_result, top_pattern_number):
 
         clusters_top_n_patterns[cluster] = top_patterns
 
-    return clusters_index
+    return clusters_index, clusters_top_n_patterns
+
+def get_cluster_similarity(clusters_top_n_patterns):
+    cluster_similarity = dict()
+    cluster_num = float(clusters_top_n_patterns.__len__() - 1)
+    for cluster in clusters_top_n_patterns:
+        cnt = 0.0
+        for patterns in clusters_top_n_patterns[cluster]:
+            for c in clusters_top_n_patterns:
+                if c != cluster:
+                    for p in clusters_top_n_patterns[c]:
+                        if p == patterns:
+                            cnt += 1/float(clusters_top_n_patterns[cluster].__len__())
+        cluster_similarity[cluster] = (cluster_num - cnt)/cluster_num
+    return cluster_similarity
 
 class Evaluate:
 
@@ -108,21 +119,30 @@ class Evaluate:
             result_path = file
             if os.path.exists(result_path):
                 cluster_result = load_cluster_result(result_path)
-                clusters_index = get_clusters_index(users_pattern, cluster_result, top_pattern_number)
+                [clusters_index, clusters_top_n_patterns] = get_clusters_index(users_pattern, cluster_result,
+                                                                               top_pattern_number)
                 cluster_users = get_cluster_users(cluster_result)
+                cluster_similarity = get_cluster_similarity(clusters_top_n_patterns)
                 write_path = file.split(".csv")[
                                  0] + "_topPattern" + str(top_pattern_number) + "_EvaluateResultRefined.csv"
                 print "Write the evaluate result to file:" + write_path
                 with open(write_path, "w") as wf:
                     total_value = 0.
                     total_user = 0
+                    sum_ns = 0.
                     for cluster in clusters_index:
                         wf.write("Cluster"+str(cluster)+":,")
                         wf.write(str(clusters_index[cluster]) + ",")
                         wf.write(str(len(cluster_users[cluster])) + ",")
                         for patterns in clusters_top_n_patterns[cluster]:
                             wf.write(str(patterns) + ",")
+                        wf.write(str(cluster_similarity[cluster]) + ",")
                         total_value += clusters_index[cluster] * len(cluster_users[cluster])
                         total_user += len(cluster_users[cluster])
+                        sum_ns += cluster_similarity[cluster]
                         wf.write("\n")
                     wf.write("EvaValue:" + "," + str(total_value/total_user))
+                    ns_means = sum_ns/clusters_top_n_patterns.keys().__len__()
+                    for num in range(clusters_top_n_patterns[clusters_top_n_patterns.keys()[1]].__len__()):
+                        wf.write(",")
+                    wf.write("," + "NonSimilarityMeans:" + "," + str(ns_means))
