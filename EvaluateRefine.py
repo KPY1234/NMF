@@ -73,7 +73,8 @@ def get_clusters_index(users_pattern, cluster_result, top_pattern_number):
         sorted_clusters_users_patterns = sorted(clusters_users_patterns.items(), key=operator.itemgetter(1))
 
         for i in range(top_pattern_number):
-            top_patterns.append(sorted_clusters_users_patterns[len(sorted_clusters_users_patterns) - i - 1][0])
+            if (len(sorted_clusters_users_patterns) - i - 1) > 0:
+                top_patterns.append(sorted_clusters_users_patterns[len(sorted_clusters_users_patterns) - i - 1][0])
 
         top_patterns_users = dict()
 
