@@ -39,7 +39,7 @@ def load_matrix(matrix_path):
     columns = zip(*f)
     patterns = columns.pop(0)
 
-    with open('./DataSet/user_pattern.csv', 'w') as wf:
+    with open('./DataSet/top_15_user_pattern.csv', 'w') as wf:
 
         wf.write('User ID'+','+'Patterns\n')
 
@@ -65,13 +65,13 @@ def load_matrix(matrix_path):
     return pattern_num_dict, user_pattern_dict
 
 
-def gen_cluster_top10_patterns(pattern_num_dict, user_pattern_dict):
+def gen_cluster_top15_patterns(pattern_num_dict, user_pattern_dict):
     # print pattern_num_dict
 
     for cluster_file in glob.glob("./NewClusterResult/H_*_refined_cluster.csv"):
         # print cluster_file
 
-        with open(cluster_file.replace('.csv', '_patterns.csv'), 'w') as wf:
+        with open(cluster_file.replace('.csv', '_patterns_top_15_.csv'), 'w') as wf:
 
             with open(cluster_file) as rf:
                 for line in rf:
@@ -123,9 +123,9 @@ def gen_cluster_top10_patterns(pattern_num_dict, user_pattern_dict):
 
 
 class info_statistics:
-    matrix_path = './DataSet/matrix.csv'
+    matrix_path = './DataSet/matrix_top_15.csv'
     pattern_num_dict, user_pattern_dict = load_matrix(matrix_path)
-    gen_cluster_top10_patterns(pattern_num_dict, user_pattern_dict)
+    gen_cluster_top15_patterns(pattern_num_dict, user_pattern_dict)
 
 
 
