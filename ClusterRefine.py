@@ -46,7 +46,7 @@ def refine(file):
 
 class cluster:
 
-    files = ['./NewClusterResult/H_8_1e-8_refined.csv', './NewClusterResult/H_10_1e-8_refined.csv', './NewClusterResult/H_12_1e-8_refined.csv']
+    files = ['K:\ChromeDownload\NMF10-correlation-H_refined.csv']
     for file in files:
 
         refine(file)

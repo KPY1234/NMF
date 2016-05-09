@@ -125,7 +125,11 @@ def gen_normal_top_n_matrix(matrix_top_n, n):
     #             line += ','
     #     print line
 
+<<<<<<< HEAD
     with open("./DataSet/normal_matrix_top_"+str(n)+".csv", "w") as wf:
+=======
+    with open("./DataSet/normal_matrix_top_"+str(n)+"_.csv", "w") as wf:
+>>>>>>> def77985aa5c501c4a01f9406d26259f6e7e4be9
         wf.write("patterns\users,")
         for i in range(len(users)):
             wf.write(str(users[i]))
@@ -146,7 +150,11 @@ class TopNMatrix:
     n = 15
 
     matrix = './DataSet/matrix.csv'
+<<<<<<< HEAD
     top_n_pattern(matrix, n)
+=======
+    # top_n_pattern(matrix, n)
+>>>>>>> def77985aa5c501c4a01f9406d26259f6e7e4be9
     matrix_top_n = matrix.replace('.csv', '_top_'+str(n)+'.csv')
 
     gen_normal_top_n_matrix(matrix_top_n, n)
