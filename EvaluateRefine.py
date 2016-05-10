@@ -46,8 +46,7 @@ def get_cluster_users(cluster_result):
     for cluster in cluster_result:
         user_list = ""
         for user in cluster_result[cluster]:
-            if user != " ":
-                if user != "\\n":
+            if user != " " and user != "" and user != "\n":
                     user_list += user
         clusters_users[cluster] = user_list.split(" ")
     return clusters_users
@@ -70,7 +69,7 @@ def get_clusters_index(users_pattern, cluster_result, top_pattern_number):
         sorted_clusters_users_patterns = sorted(clusters_users_patterns.items(), key=operator.itemgetter(1))
 
         for i in range(top_pattern_number):
-            if (len(sorted_clusters_users_patterns) - i - 1) > 0:
+            if (len(sorted_clusters_users_patterns) - i - 1) >= 0:
                 top_patterns.append(sorted_clusters_users_patterns[len(sorted_clusters_users_patterns) - i - 1][0])
 
         top_patterns_users = dict()
@@ -83,12 +82,44 @@ def get_clusters_index(users_pattern, cluster_result, top_pattern_number):
                         top_patterns_users[top_pattern] += 1
 
         clusters_index[cluster] = 0.0
-        for top_pattern in top_patterns_users:
-            clusters_index[cluster] += float(top_patterns_users[top_pattern]) / user_list.__len__() / top_pattern_number
+
+        if top_patterns.__len__() == top_pattern_number:
+            for top_pattern in top_patterns_users:
+                clusters_index[cluster] += float(top_patterns_users[top_pattern]) / user_list.__len__() / top_pattern_number
+        else:
+            clusters_index[cluster] = 1
 
         clusters_top_n_patterns[cluster] = top_patterns
 
     return clusters_index, clusters_top_n_patterns
+
+# def get_pattern_rework(top_patterns, top_pattern_number):
+#     rework_top_patterns
+#
+#     return rework_top_patterns
+
+def get_cluster_dissimilar(clusters_top_n_patterns, cluster_users):
+    user_cnt = 0.0
+    clusters_top_n_patterns_cnt = 0.0
+    top_pattern_dict = dict()
+    tmp = 0.0
+    for cluster in cluster_users:
+        user_cnt += cluster_users[cluster].__len__()
+        clusters_top_n_patterns_cnt += clusters_top_n_patterns[cluster].__len__()
+        for pattern in clusters_top_n_patterns[cluster]:
+            if pattern in top_pattern_dict.keys():
+                top_pattern_dict[pattern].append(cluster)
+            else:
+                top_pattern_dict[pattern] = list()
+                top_pattern_dict[pattern].append(cluster)
+    for pattern in top_pattern_dict:
+        if top_pattern_dict[pattern].__len__() > 1:
+            total_pattern_users = 0.0
+            for cluster in top_pattern_dict[pattern]:
+                total_pattern_users += cluster_users[cluster].__len__()
+            tmp += (top_pattern_dict[pattern].__len__()/clusters_top_n_patterns_cnt)*(total_pattern_users/user_cnt)
+    cluster_dissimilar = 1 - tmp
+    return cluster_dissimilar
 
 def get_cluster_similarity(clusters_top_n_patterns):
     cluster_similarity = dict()
@@ -146,3 +177,7 @@ class Evaluate:
                     for num in range(clusters_top_n_patterns[clusters_top_n_patterns.keys()[1]].__len__()):
                         wf.write(",")
                     wf.write("," + "NonSimilarityMeans:" + "," + str(ns_means))
+                    wf.write("\n" + ",")
+                    for num in range(clusters_top_n_patterns[clusters_top_n_patterns.keys()[1]].__len__()):
+                        wf.write(",")
+                    wf.write("," + "Dissimilar:" + "," + str(get_cluster_dissimilar(clusters_top_n_patterns, cluster_users)))
