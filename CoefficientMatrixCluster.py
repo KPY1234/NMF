@@ -46,7 +46,7 @@ def coe_cluster(file, user_tup_dic, threshold):
 
         for i in xrange(key_num):
 
-            wf.write('cluster '+str(i)+'\n')
+            wf.write(str(i)+',')
 
             user_value_tup_list = user_tup_dic.get(i+1)
             list_size = len(user_value_tup_list)
@@ -66,9 +66,9 @@ def coe_cluster(file, user_tup_dic, threshold):
                 wf.write(str(tup[0])+',')
             wf.write('\n')
 
-            for tup in part_user_value_tup_list:
-                wf.write(str(tup[1]) + ',')
-            wf.write('\n')
+            # for tup in part_user_value_tup_list:
+            #     wf.write(str(tup[1]) + ',')
+            # wf.write('\n')
 
             print str(i)+'\t'+str(part_user_value_tup_list)
 
