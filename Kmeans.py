@@ -165,7 +165,7 @@ class kmeans_class:
         data_matrix[i, column % columns] += ((column/columns + 1)/10000.0)
         column += 1
 
-    list_k = [8, 10, 12]
+    list_k = [8]
 
     for i in xrange(len(list_k)):
         k = list_k[i]
