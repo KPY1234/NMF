@@ -63,7 +63,7 @@ def coe_cluster(file, user_tup_dic, threshold):
             part_user_value_tup_list = user_value_tup_list[begin:end]
 
             for tup in part_user_value_tup_list:
-                wf.write(str(tup[0])+',')
+                wf.write(str(tup[0])+', ')
             wf.write('\n')
 
             # for tup in part_user_value_tup_list:
